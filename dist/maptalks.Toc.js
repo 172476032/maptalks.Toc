@@ -42,14 +42,19 @@ var Toc = function (_maptalks$control$Con) {
     // }
     Toc.prototype.buildOn = function buildOn(map) {
         var dom = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
-        var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-ul');
+        var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-layerUl');
         var html = '';
         var layerNames = this._getLayerNames(map);
         for (var i = 0; i < layerNames.length; i++) {
-            html = html + '<li><input  type="checkbox"><p class="maptalks-name">' + layerNames[i] + '</p></li>';
+            html = html + '<li class="maptalks-layerLi"><input class="maptalks-layerInput" value="' + layerNames[i] + '" type="checkbox" checked><p class="maptalks-layerName">' + layerNames[i] + '</p></li>';
         }
         layerUl.innerHTML = html;
         dom.appendChild(layerUl);
+        //
+        //this._event(map);
+        map.on('addlayer', function (e) {
+            this._showLayer(e.target);
+        }, this);
         return dom;
     };
 
@@ -64,6 +69,28 @@ var Toc = function (_maptalks$control$Con) {
         layerNames.push(baseLayerName);
         return layerNames;
     };
+
+    Toc.prototype._showLayer = function _showLayer(map) {
+        var inputBtns = document.getElementsByClassName("maptalks-layerInput");
+        if (inputBtns.length > 0) {
+            alert('as');
+            for (var i = 0; i < inputBtns.length; i++) {
+                inputBtns[i].onclick = function (e) {
+                    if (!e.target.checked) {
+                        var layerName = e.target.value;
+                        map.getBaseLayer(layerName).hide();
+                    }
+                };
+            }
+        } else {
+            alert('No Layers');
+        }
+    };
+    // _event(map){
+    //     document.getElementById('maptalks-layerInput'),onclick =function () {
+    //         this._showLayer(map);
+    //     }.bind(this)
+    // }
 
     return Toc;
 }(maptalks.control.Control);
