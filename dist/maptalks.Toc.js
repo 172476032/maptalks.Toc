@@ -21,10 +21,11 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
 var options = {
-    'position': 'top-left',
-    'slider': true,
-    'zoomLevel': false,
-    'navPan': true
+    'position': {
+        top: '20',
+        left: '20'
+    },
+    'draggable': true
 };
 
 var Toc = function (_maptalks$control$Con) {
@@ -41,20 +42,27 @@ var Toc = function (_maptalks$control$Con) {
     // }
     Toc.prototype.buildOn = function buildOn(map) {
         var dom = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
-        var layerDom = maptalks.DomUtil.createEl('div', 'maptalks-Layer');
+        var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-ul');
         var html = '';
-        html = '<div>' + this._getLayers(map) + '</div>';
-        layerDom.innerHTML = html;
-        dom.appendChild(layerDom);
-
+        var layerNames = this._getLayerNames(map);
+        for (var i = 0; i < layerNames.length; i++) {
+            html = html + '<li><input  type="checkbox"><p class="maptalks-name">' + layerNames[i] + '</p></li>';
+        }
+        layerUl.innerHTML = html;
+        dom.appendChild(layerUl);
         return dom;
     };
 
-    Toc.prototype._getLayers = function _getLayers(map) {
-        var layers = map.getLayer();
+    Toc.prototype._getLayerNames = function _getLayerNames(map) {
+        var layerNames = [];
+        var vectorLayers = map.getLayers();
+        for (var i = 0; i < vectorLayers.length; i++) {
+            layerNames.push(vectorLayers[i].getId());
+        }
         var baseLayer = map.getBaseLayer();
         var baseLayerName = baseLayer.getId();
-        return baseLayerName;
+        layerNames.push(baseLayerName);
+        return layerNames;
     };
 
     return Toc;
