@@ -59,9 +59,18 @@
         window.onload = function () {
             initMap();
             var toc = new maptalks.Toc({
-                'position': 'top-left'
+                'position': 'top-right',
+                'styles':{
+                    'width':'100px',
+                    'height':'150px',
+                    'background-color': '#076AC7',
+                    'border':'2px solid green',
+                    'opacity':'0.5'
+                }
             });
             map.addControl(toc);
+
+
         };
 </script>
 </head>

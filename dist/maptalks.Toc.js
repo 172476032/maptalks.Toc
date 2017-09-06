@@ -20,21 +20,29 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
+/* eslint-disable no-undef,comma-spacing */
 var options = {
     'position': {
         top: '100',
         left: '200'
     },
-    'draggable': true
+    'draggable': true,
+    'styles': {
+        width: '800',
+        height: '800'
+    }
 };
 
 var Toc = function (_maptalks$control$Con) {
     _inherits(Toc, _maptalks$control$Con);
 
-    function Toc() {
+    function Toc(options) {
         _classCallCheck(this, Toc);
 
-        return _possibleConstructorReturn(this, _maptalks$control$Con.apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, _maptalks$control$Con.call(this));
+
+        _this.options = options;
+        return _this;
     }
 
     Toc.prototype.buildOn = function buildOn(map) {
@@ -46,6 +54,7 @@ var Toc = function (_maptalks$control$Con) {
             html = html + '<li class="maptalks-layerLi"><input class="maptalks-layerInput" value="' + layerNames[i] + '" type="checkbox" checked><p class="maptalks-layerName">' + layerNames[i] + '</p></li>';
         }
         layerUl.innerHTML = html;
+        this._setstyle(domToc, this.options);
         domToc.appendChild(layerUl);
         this._domToc = domToc;
         this._registerDomEvent();
@@ -66,13 +75,14 @@ var Toc = function (_maptalks$control$Con) {
 
     Toc.prototype._switchLayer = function _switchLayer() {
         this.map = this.getMap();
-        var inputBtns = document.getElementsByClassName("maptalks-layerInput");
+        var inputBtns = document.getElementsByClassName('maptalks-layerInput');
         if (inputBtns.length > 0) {
             for (var i = 0; i < inputBtns.length; i++) {
                 inputBtns[i].onclick = function (e) {
                     if (!e.target.checked) {
                         var layerName = e.target.value;
                         if (this.map.getBaseLayer() instanceof maptalks.TileLayer) {
+                            //instanceof maptalks.TileLayer
                             this.map.getBaseLayer().hide();
                         } else {
                             this.map.getLayer(layerName).hide();
@@ -80,6 +90,7 @@ var Toc = function (_maptalks$control$Con) {
                     } else {
                         var _layerName = e.target.value;
                         if (this.map.getBaseLayer() instanceof maptalks.TileLayer) {
+                            //instanceof maptalks.TileLayer
                             this.map.getBaseLayer().show();
                         } else {
                             this.map.getLayer(_layerName).show();
@@ -96,11 +107,17 @@ var Toc = function (_maptalks$control$Con) {
         if (this._domToc) {
             maptalks.DomUtil.addDomEvent(this._domToc, 'mouseover', this._switchLayer, this);
         }
-        var inputBtns = document.getElementsByClassName("maptalks-layerInput");
+        var inputBtns = document.getElementsByClassName('maptalks-layerInput');
         if (inputBtns.length > 0) {
             for (var i = 0; i < inputBtns.length; i++) {
                 maptalks.DomUtil.addDomEvent(inputBtns[i], 'mouseover', this._switchLayer, this);
             }
+        }
+    };
+
+    Toc.prototype._setstyle = function _setstyle(dom, options) {
+        for (var p in options['styles']) {
+            dom.style[p] = options['styles'][p];
         }
     };
 
