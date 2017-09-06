@@ -8,11 +8,8 @@ const options = {
     'draggable': true
 };
 
-
 export class Toc extends maptalks.control.Control {
-    // constructor(options) {
-    //     super(options);
-    // }
+
     buildOn(map) {
         const dom = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
         const layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-layerUl');
@@ -23,12 +20,7 @@ export class Toc extends maptalks.control.Control {
         }
         layerUl.innerHTML = html;
         dom.appendChild(layerUl);
-        //
-        //this._event(map);
-        map.on('addlayer',function (e) {
-            this._showLayer(e.target);
-
-        },this);
+        dom.addEventListener('mouseover',this._switchLayer,true);
         return dom;
     }
     _getLayerNames(map) {
@@ -42,17 +34,28 @@ export class Toc extends maptalks.control.Control {
         layerNames.push(baseLayerName);
         return layerNames;
     }
-    _showLayer(map){
+    _switchLayer(){
+        this.map = map;
         let inputBtns = document.getElementsByClassName("maptalks-layerInput");
         if(inputBtns.length > 0){
-        alert('as');
         for(let i=0;i<inputBtns.length;i++){
             inputBtns[i].onclick = function (e) {
                 if(!e.target.checked){
                     let layerName = e.target.value;
-                    map.getBaseLayer(layerName).hide()
+                    if(this.map.getBaseLayer(layerName)){
+                        this.map.getBaseLayer(layerName).hide()
+                    }else{
+                        this.map.getLayer(layerName).hide();
+                    }
+                }else{
+                    let layerName = e.target.value;
+                    if(this.map.getBaseLayer(layerName)){
+                        this.map.getBaseLayer(layerName).show()
+                    }else{
+                        this.map.getLayer(layerName).show();
+                    }
                 }
-           }
+           }.bind(this)
         }
        } else {
         alert('No Layers');

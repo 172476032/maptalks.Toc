@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var btn = document.getElementsByTagName('input');
+            btn.onclick = function (a) {
+                console.log(a.tar);
+                console.log(this);
+            };
+            btn.onclick({tar:this});
+            function fn() {
+                alert(12);
+            }
+            function extend(dest) {
+                for (let i = 1; i < arguments.length; i++) {
+                    const src = arguments[i];
+                    for (const k in src) {
+                        dest[k] = src[k];
+                    }
+                }
+                return dest;
+            }
+
+            document.getElementById('er').onclick = function () {
+                alert(this);
+                console.log(extend({top:'121',left:'qwe'},{right:'qw',left:'qwe'}));
+            }.bind(this);
+        }
+    </script>
+</head>
+<body>
+<input type="button" value="模拟事件">
+<input id='er' type="button" value="Click Me" >//extend({position:{top:'20',left:'20'}})
+</body>
+</html>
+

@@ -37,9 +37,6 @@ var Toc = function (_maptalks$control$Con) {
         return _possibleConstructorReturn(this, _maptalks$control$Con.apply(this, arguments));
     }
 
-    // constructor(options) {
-    //     super(options);
-    // }
     Toc.prototype.buildOn = function buildOn(map) {
         var dom = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
         var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-layerUl');
@@ -50,11 +47,7 @@ var Toc = function (_maptalks$control$Con) {
         }
         layerUl.innerHTML = html;
         dom.appendChild(layerUl);
-        //
-        //this._event(map);
-        map.on('addlayer', function (e) {
-            this._showLayer(e.target);
-        }, this);
+        dom.addEventListener('mouseover', this._switchLayer, true);
         return dom;
     };
 
@@ -70,17 +63,28 @@ var Toc = function (_maptalks$control$Con) {
         return layerNames;
     };
 
-    Toc.prototype._showLayer = function _showLayer(map) {
+    Toc.prototype._switchLayer = function _switchLayer() {
+        this.map = map;
         var inputBtns = document.getElementsByClassName("maptalks-layerInput");
         if (inputBtns.length > 0) {
-            alert('as');
             for (var i = 0; i < inputBtns.length; i++) {
                 inputBtns[i].onclick = function (e) {
                     if (!e.target.checked) {
                         var layerName = e.target.value;
-                        map.getBaseLayer(layerName).hide();
+                        if (this.map.getBaseLayer(layerName)) {
+                            this.map.getBaseLayer(layerName).hide();
+                        } else {
+                            this.map.getLayer(layerName).hide();
+                        }
+                    } else {
+                        var _layerName = e.target.value;
+                        if (this.map.getBaseLayer(_layerName)) {
+                            this.map.getBaseLayer(_layerName).show();
+                        } else {
+                            this.map.getLayer(_layerName).show();
+                        }
                     }
-                };
+                }.bind(this);
             }
         } else {
             alert('No Layers');
