@@ -58,6 +58,7 @@
         }
         window.onload = function () {
             initMap();
+            map.getBaseLayer().hide();
             var toc = new maptalks.Toc({
                 'position': 'top-right',
                 'styles':{
@@ -69,8 +70,6 @@
                 }
             });
             map.addControl(toc);
-
-
         };
 </script>
 </head>

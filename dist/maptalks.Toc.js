@@ -49,28 +49,95 @@ var Toc = function (_maptalks$control$Con) {
         var domToc = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
         var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-layerUl');
         var html = '';
-        var layerNames = this._getLayerNames(map);
-        for (var i = 0; i < layerNames.length; i++) {
-            html = html + '<li class="maptalks-layerLi"><input class="maptalks-layerInput" value="' + layerNames[i] + '" type="checkbox" checked><p class="maptalks-layerName">' + layerNames[i] + '</p></li>';
+        var layersInfo = this._getLayerIds(map);
+        for (var i = layersInfo.length - 1; i >= 0; i--) {
+            var checked = void 0;
+            if (layersInfo[i].visible == true) {
+                checked = 'checked';
+                html = html + '<li class="maptalks-layerLi" id="' + layersInfo[i].id + '"><input class="maptalks-layerInput" id="' + layersInfo[i].id + '" type="checkbox"  checked="' + checked + '"><p class="maptalks-layerName">' + layersInfo[i].id + '</p></li>';
+            } else {
+                html = html + '<li class="maptalks-layerLi" id="' + layersInfo[i].id + '"><input class="maptalks-layerInput" id="' + layersInfo[i].id + '" type="checkbox" ><p class="maptalks-layerName">' + layersInfo[i].id + '</p></li>';
+            }
         }
         layerUl.innerHTML = html;
         this._setstyle(domToc, this.options);
         domToc.appendChild(layerUl);
         this._domToc = domToc;
-        this._registerDomEvent();
+        map.on('addlayer', this._addLayers, this); //对新增图层进行监听
+        this._layerDomMousedown(this._domToc);
+        this._registerDomEvent(); //注册dom事件
         return domToc;
     };
 
-    Toc.prototype._getLayerNames = function _getLayerNames(map) {
-        var layerNames = [];
+    Toc.prototype._addLayers = function _addLayers(event) {
+        var html = '';
+        var layersInfo = this._getLayerIds(map);
+        for (var i = layersInfo.length - 1; i >= 0; i--) {
+            var checked = void 0;
+            if (layersInfo[i].visible == true) {
+                checked = 'checked';
+                html = html + '<li class="maptalks-layerLi" id="' + layersInfo[i].id + '"><input class="maptalks-layerInput" id="' + layersInfo[i].id + '" type="checkbox"  checked="' + checked + '"><p class="maptalks-layerName">' + layersInfo[i].id + '</p></li>';
+            } else {
+                html = html + '<li class="maptalks-layerLi" id="' + layersInfo[i].id + '"><input class="maptalks-layerInput" id="' + layersInfo[i].id + '" type="checkbox" ><p class="maptalks-layerName">' + layersInfo[i].id + '</p></li>';
+            }
+        }
+        var layerNewUl = maptalks.DomUtil.createEl('newUl', 'maptalks-layerNewUl');
+        layerNewUl.innerHTML = html;
+        var layerolderUL = document.getElementsByClassName('maptalks-layerUl')[0];
+        document.getElementsByClassName('maptalks-Toc')[0].replaceChild(layerNewUl, layerolderUL);
+    };
+    //监听加载后图层，并融合
+    // _addLayerIds(event) {
+    //     let currentLayersInfo = this._getLayerIds(map);
+    //     let layersInfo = [];
+    //     let layers = event.layers;
+    //     for (let i = 0; i < layers.length; i++) {
+    //         let layer = {};
+    //         layer.id = layers[i].getId();
+    //         layer.visible = layers[i].isVisible();
+    //         layer.zindex = layers[i].getZIndex();
+    //         layersInfo.push(layer);
+    //     }
+    //     layersInfo = this._layerZindexSort(layersInfo,'zindex'); //对对象数组按zindex进行排序
+    //     currentLayersInfo.push.apply(currentLayersInfo,layersInfo); //把新增图层数组合并到已存在的数组内
+    //     console.log(currentLayersInfo);
+    //     return currentLayersInfo;
+    // }
+
+
+    Toc.prototype._getLayerIds = function _getLayerIds(map) {
+        var layersInfo = [];
+        //矢量图
         var vectorLayers = map.getLayers();
         for (var i = 0; i < vectorLayers.length; i++) {
-            layerNames.push(vectorLayers[i].getId());
+            var layer = {};
+            layer.id = vectorLayers[i].getId();
+            layer.visible = vectorLayers[i].isVisible();
+            layer.zindex = vectorLayers[i].getZIndex();
+            layersInfo.push(layer);
         }
-        var baseLayer = map.getBaseLayer();
-        var baseLayerName = baseLayer.getId();
-        layerNames.push(baseLayerName);
-        return layerNames;
+        //底图
+        var baseLayer = {};
+        baseLayer.id = map.getBaseLayer().getId();
+        baseLayer.visible = map.getBaseLayer().isVisible();
+        baseLayer.zindex = map.getBaseLayer().getZIndex();
+        layersInfo.push(baseLayer);
+        layersInfo = this._layerZindexSort(layersInfo, 'zindex');
+        console.log(layersInfo);
+        return layersInfo;
+    };
+
+    Toc.prototype._layerZindexSort = function _layerZindexSort(layersInfo, zindex) {
+        layersInfo = layersInfo.sort(this._layerZindexCompare(zindex));
+        return layersInfo;
+    };
+
+    Toc.prototype._layerZindexCompare = function _layerZindexCompare(layerZindex) {
+        return function (obj1, obj2) {
+            var layerZindex1 = obj1[layerZindex];
+            var layerZindex2 = obj2[layerZindex];
+            return layerZindex1 - layerZindex2; // 升序
+        };
     };
 
     Toc.prototype._switchLayer = function _switchLayer() {
@@ -79,21 +146,18 @@ var Toc = function (_maptalks$control$Con) {
         if (inputBtns.length > 0) {
             for (var i = 0; i < inputBtns.length; i++) {
                 inputBtns[i].onclick = function (e) {
+                    var layerId = e.target.id;
                     if (!e.target.checked) {
-                        var layerName = e.target.value;
-                        if (this.map.getBaseLayer() instanceof maptalks.TileLayer) {
-                            //instanceof maptalks.TileLayer
-                            this.map.getBaseLayer().hide();
+                        if (this.map.getLayer(layerId)) {
+                            this.map.getLayer(layerId).hide();
                         } else {
-                            this.map.getLayer(layerName).hide();
+                            this.map.getBaseLayer().hide();
                         }
                     } else {
-                        var _layerName = e.target.value;
-                        if (this.map.getBaseLayer() instanceof maptalks.TileLayer) {
-                            //instanceof maptalks.TileLayer
-                            this.map.getBaseLayer().show();
+                        if (this.map.getLayer(layerId)) {
+                            this.map.getLayer(layerId).show();
                         } else {
-                            this.map.getLayer(_layerName).show();
+                            this.map.getBaseLayer().show();
                         }
                     }
                 }.bind(this);
@@ -107,17 +171,27 @@ var Toc = function (_maptalks$control$Con) {
         if (this._domToc) {
             maptalks.DomUtil.addDomEvent(this._domToc, 'mouseover', this._switchLayer, this);
         }
-        var inputBtns = document.getElementsByClassName('maptalks-layerInput');
-        if (inputBtns.length > 0) {
-            for (var i = 0; i < inputBtns.length; i++) {
-                maptalks.DomUtil.addDomEvent(inputBtns[i], 'mouseover', this._switchLayer, this);
-            }
-        }
     };
 
     Toc.prototype._setstyle = function _setstyle(dom, options) {
         for (var p in options['styles']) {
             dom.style[p] = options['styles'][p];
+        }
+    };
+
+    Toc.prototype._layerDomMousedown = function _layerDomMousedown(dom) {
+        var lis = document.getElementsByTagName('maptalks-layerLi');
+        var id = void 0;
+        for (var i = 0; i < lis.length; i++) {
+            lis[i].onmousedown = function (e) {
+                id = e.target.id;
+            };
+            lis[i].onmouseup = function (e) {
+                var oldId = e.target.id;
+                var newNode = document.getElementById(id);
+                var oldNode = document.getElementById(oldId);
+                dom.insertBefore(newNode, oldNode);
+            };
         }
     };
 
