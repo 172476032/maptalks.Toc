@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var div = document.getElementById('div1');
+            var inputs = document.getElementsByTagName('input');
+            var mouse = false;
+            var id;
+            for (var i=0; i<inputs.length;i++){
+                inputs[i].onmousedown = function (e) {
+                   // mouse = true ;
+                    var x = e.clientX;
+                    var y = e.clientY;
+                    id = e.target.value;
+                }
+                inputs[i].onmouseup = function (e) {
+                    //mouse = false ;
+                    var x = e.clientX;
+                    var namemove = e.target.value;
+
+                    var newNode = document.getElementById(id);
+                    var oldNode = document.getElementById(namemove);
+                   // alert(newNode.value);
+                    //alert(oldNode.value);
+                    div.insertBefore( newNode,oldNode);
+                }
+            }
+
+
+
+
+        }
+
+
+    </script>
+</head>
+<body>
+<div id="div1">
+    <input  class='in1' id="name1" type="button" value="name1">
+    <input class='in1'  id="name2" type="button" value="name2">
+    <input class='in1' id="name3" type="button" value="name3">
+</div>
+</body>
+</html>

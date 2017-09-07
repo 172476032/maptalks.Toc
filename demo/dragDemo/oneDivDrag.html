@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="拖拽">
+    <meta name="description" content="拖拽">
+    <title>实现拖拽</title>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #drag{
+            width: 100px;
+            height: 100px;
+            background: red;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div id="drag"></div>
+<script type="text/javascript">
+    var Drags = function (element, callback) {
+        callback = callback || function () {};
+        var params = {
+            top: 0,
+            left: 0,
+            currentX: 0,
+            currentY: 0,
+            flag: false
+        };
+        function getCss(element, key) {
+            return element.currentStyle ? element.currentStyle[key] : document.defaultView.getComputedStyle(element,null)[key];
+            // ie用currentStyle
+        }
+        var lefts = getCss(element, "left"),
+            tops = getCss(element, "top");
+        params.left = lefts !== "auto" ? lefts : 0;
+        params.top = tops !== "auto" ? tops : 0;
+        element.onmousedown = function (event) {
+            params.flag = true;
+            event = event || window.event; // ie用后面
+            params.currentX = event.clientX;
+            params.currentY = event.clientY;
+        };
+        document.onmousemove = function (event) {
+            event = event || window.event;
+            if (params.flag) {
+                // 现在位置
+                var nowX = event.clientX,
+                    nowY = event.clientY,
+                    // 需要移动的距离
+                    disX = nowX - params.currentX,
+                    disY = nowY - params.currentY;
+                element.style.left = parseInt(params.left) + disX + "px";
+                element.style.top = parseInt(params.top) + disY + "px";
+            }
+        };
+        document.onmouseup = function () {
+            params.flag = false;
+            var lefts = getCss(element, "left"),
+                tops = getCss(element, "top");
+            params.left = lefts !== "auto" ? lefts : 0;
+            params.top = tops !== "auto" ? tops : 0;
+        }
+    }(document.getElementById('drag'));
+</script>
+</body>
+</html>

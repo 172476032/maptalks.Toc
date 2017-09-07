@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<style type="text/css">
+    div.box{
+        position:relative;
+        padding:5px;
+        background-color:#000;
+        width:300px;
+        height:300px;
+        overflow:hidden;
+    }
+    div.box div.item{
+        float:left;
+        width:90px;
+        height:90px;
+        background-color:#ccc;
+        margin:5px;
+        position:relative;
+        cursor:pointer;
+    }
+    div.mask{
+        width:90px;
+        height:90px;
+        background-color:#f00;
+        opacity:0.8;
+        filter:progid:DXImageTransform.Microsoft.Alpha(opacity=80);
+        position:absolute;
+        visibility:hidden;
+        top:20px;
+        left:20px;
+        z-index:10;
+    }
+</style>
+<script type="text/javascript">
+    var darg = {
+        target : null,
+        ox : 0,
+        oy : 0
+    };
+    var box = document.createElement("div");
+    box.className = "box";
+    var mask = document.createElement("div");
+    mask.className = "mask";
+    box.appendChild(mask);
+    for(var i = 0; i < 9; i ++){
+        var item = document.createElement("div");
+        item.className = "item";
+        item.appendChild(document.createTextNode(i + 1));
+        item.onmousedown = function(){
+            var e = arguments[0] || window.event;
+            var o = e.target || e.srcElement;
+            darg.target = o;
+            mask.style["top"] = o.offsetTop + "px";
+            mask.style["left"] = o.offsetLeft + "px";
+            mask.style["visibility"] = "visible";
+            darg.ox = e.clientX - mask.offsetLeft;
+            darg.oy = e.clientY - mask.offsetTop;
+        }
+        box.appendChild(item);
+    }
+    document.body.appendChild(box);
+    function getItem(x,y){
+        x = x - box.offsetLeft;
+        y = y - box.offsetTop;
+        var o = box.childNodes[(3 - parseInt((box.offsetWidth - x)/100) + (2 - parseInt((box.offsetHeight - y)/100)) * 3)];
+        var n = darg.target.nextSibling;
+        var on = o.nextSibling;
+        box.insertBefore(o,n);
+        box.insertBefore(darg.target,on);
+    }
+    document.onmousemove = function(){
+        if(darg.target != null && darg.target.nodeType == 1){
+            var e = arguments[0] || window.event;
+            mask.style["left"] = e.clientX - darg.ox + "px";
+            mask.style["top"] = e.clientY - darg.oy + "px";
+        }
+    }
+    box.onmouseup = function(){
+        if(darg.target != null && darg.target.nodeType == 1){
+            var e = arguments[0] || window.event;
+            var o = e.target || e.srcElement;
+            getItem(e.clientX,e.clientY);
+            darg.target = null;
+        }
+    }
+
+    document.onmouseup = function(){
+        darg.target = null;
+        mask.style["visibility"] = "hidden";
+    }
+</script>
+</body>
+</html>
+

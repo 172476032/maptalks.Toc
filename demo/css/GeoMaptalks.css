@@ -1,0 +1,49 @@
+﻿.maptalks-msgBox {
+    box-shadow: 0px 0px 0px;
+    background:rgba(0,60,100,.9);
+    border:1px solid #4F6577;
+    opacity:0.8
+}
+    .maptalks-msgBox .maptalks-msgContent {
+        color:#ffffff;
+    }
+    .maptalks-msgBox h2 {
+        color:#ffffff;
+    }
+    .maptalks-msgBox em.maptalks-ico_top {
+        display: block;
+        width: 17px;
+        height: 10px;
+        background: url(../images/control/5_1.png) no-repeat;
+        position: absolute;
+        left: 50%;
+        margin-left: -5px;
+        bottom: -10px;
+    }
+          .maptalks-toolbar-vertical li .maptalks-dropMenu em.maptalks-ico_top {
+                display: block;
+                width: 5px;
+                height: 6px;
+                background: url(../images/control/4_1.png) no-repeat;
+                position: absolute;
+                top: 12px;
+                right: -4px;
+            }
+            .maptalks-toolbar-horizonal li .maptalks-dropMenu em.maptalks-ico_top {
+                display: block;
+                width: 5px;
+                height: 6px;
+                background: url(../images/control/4.png) no-repeat;
+                position: absolute;
+                top: -4px;
+                left: 12px;
+            }
+ .maptalks-menu em.maptalks-ico_top {
+        display: block;
+        width: 17px;
+        height: 10px;
+        background: url(../images/control/5.png) no-repeat;
+        position: absolute;
+        top: -10px;
+        left: 8px;
+    }

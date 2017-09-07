@@ -1,0 +1,53 @@
+/*自定义字体*/
+@font-face {
+    font-family: AgencyFBBold;
+    src: url('font/Agency_FB_Bold.otf');
+}
+
+/*定义页面样式*/
+html {
+    overflow: hidden;
+}
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: #091228;
+}
+.pmapbox {
+    width: 100%;
+    height: 100%;
+}
+.logo {
+    position: absolute;
+    background: url("../img/logo.png") no-repeat;
+    width: 1643px;
+    height: 128px;
+    left: 25px;
+    top: 4px;
+    z-index: 8999;
+}
+.weatherbox {
+    position: absolute;
+    background: url("../img/weather-box.png") no-repeat;
+    width: 201px;
+    height: 183px;
+    right: 40px;
+    top: 10px;
+    z-index: 8999;
+}
+.timebox {
+    position: relative;
+    width: 100px;
+    left: 53px;
+    top: 159px;
+    text-align: center;
+}
+.timebox > span,
+.timebox > label {
+    color: #ffffff;
+    font-family: AgencyFBBold;
+    font-size: 36px;
+    letter-spacing: 4px;
+}
