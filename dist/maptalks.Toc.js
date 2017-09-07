@@ -46,6 +46,7 @@ var Toc = function (_maptalks$control$Con) {
     }
 
     Toc.prototype.buildOn = function buildOn(map) {
+        this.map = map;
         var domToc = maptalks.DomUtil.createEl('div', 'maptalks-Toc');
         var layerUl = maptalks.DomUtil.createEl('ul', 'maptalks-layerUl');
         var html = '';
@@ -70,6 +71,7 @@ var Toc = function (_maptalks$control$Con) {
     };
 
     Toc.prototype._addLayers = function _addLayers(event) {
+        var map = this.map;
         var html = '';
         var layersInfo = this._getLayerIds(map);
         for (var i = layersInfo.length - 1; i >= 0; i--) {
@@ -81,9 +83,10 @@ var Toc = function (_maptalks$control$Con) {
                 html = html + '<li class="maptalks-layerLi" id="' + layersInfo[i].id + '"><input class="maptalks-layerInput" id="' + layersInfo[i].id + '" type="checkbox" ><p class="maptalks-layerName">' + layersInfo[i].id + '</p></li>';
             }
         }
-        var layerNewUl = maptalks.DomUtil.createEl('newUl', 'maptalks-layerNewUl');
+        var layerNewUl = maptalks.DomUtil.createEl('Ul', 'maptalks-layerNewUl');
         layerNewUl.innerHTML = html;
-        var layerolderUL = document.getElementsByClassName('maptalks-layerUl')[0];
+        var layerolderUL = document.getElementsByClassName('maptalks-Toc')[0].firstChild;
+        console.log(layerolderUL);
         document.getElementsByClassName('maptalks-Toc')[0].replaceChild(layerNewUl, layerolderUL);
     };
     //监听加载后图层，并融合
